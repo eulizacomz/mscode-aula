@@ -1,0 +1,200 @@
+
+--ATIVIDADE 01
+
+CREATE DATABASE escola;
+USE escola;
+
+
+CREATE TABLE professores (
+id INT PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(100) NOT NULL,
+especialidade VARCHAR (100)
+
+);
+
+CREATE TABLE cursos (
+id INT PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(100) NOT NULL,
+professor_id INT,
+FOREIGN KEY(professor_id) REFERENCES professores(id)
+
+);
+
+
+CREATE TABLE alunos (
+id INT PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR9(100) NOT NULL,
+cidade VARCHAR(100)
+
+);
+
+CREATE TABLE matriculas (
+id INT PRIMARY KEY AUTO_INCREMENT,
+aluno_id INT,
+curso_id INT,
+data_matricula DATE,
+FOREIGN KEY (aluno_id) REFERENCES alunos(id),
+FOREIGN KEY (curso_id) REFERENCES cursos(id)
+
+);
+
+INSERT INTO professores (nome, especialidade) VALUES
+('Prof. Silva' 'Matemática'),
+('Prof. Vilela' 'Física'),
+('Prof. Sales' 'História');
+
+
+INSERT INTO cursos (nome, professor_id) VALUES
+('Matemática Básica' 1),
+('Física Quantica' 2),
+('História do Brasil'3);
+
+INSERT INTO alunos (nome, cidade) VALUES
+(('Maria Eliza' 'Belo Horizonte'),
+('Eduardo' 'Pinheiros'),
+('Helena' NULL),
+('Joana' 'Vitória');
+
+
+INSERT INTO matriculas (aluno_id, curs_id, data_matricula) VALUES
+(1, 1, '2024-01-15'),
+(1, 2, '2024-01-16'),
+(2, 1, '2024-01-10'),
+(3, 3, '2024-01-20');
+
+-- RESULTADO 
+
+SELECT 
+a.nome AS nome_aluno,
+c.nome AS nome_curso,
+p.nome AS nome_professor
+
+FROM alunos a
+INNER JOIN matriculas m ON a.id = m.aluno_id
+INNER JOIN cursos c ON a.id = m.aluno_id
+INNER JOIN professores p ON c.professor_id = p.id
+ORDER BY a.nome, c.nome;
+
+
+-- ATIVIDADE 02 
+
+SELECT a.id,
+a.nome,
+a.cidade
+
+FROM alunos a
+LEFT JOIN matriculas m ON a.id = m.aluno_id
+WHERE m.id IS NULL;
+
+
+--ATIVIDADE 03
+
+SELECT 
+c.id,
+c.nome AS nome_curso,
+p.nome AS nome_professor
+
+FROM cursos c
+LEFT cursos c
+LEFT JOIN matriculas m ON c.id = m.curso_id
+LEFT JOIN professores p ON c.professor_id = p.id
+WHERE m.id IS NULL;
+
+
+--ATIVIDADE 04 
+
+SELECT 
+a.nome AS nome_aluno,
+c.nome AS nome_curso,
+p.nome AS nome_professor
+
+FROM alunos a
+
+INNER JOIN matriculas m ON a.id = m.aluno_id
+INNER JOIN cursos c ON m.curso_id
+INNER JOIN professores p ON c.professor_id = p.id
+
+WHERE p.nome = 'Prof.Silva'
+ORDER BY a.nome;
+
+
+--ATIVIDADE 05
+
+SELECT 
+a.nome AS nome_aluno,
+a.cidade,
+c.nome AS nome_curso,
+p.nome AS nome_professor
+
+FROM alunos a 
+INNER JOIN matriculas m ON a.id = m.aluno_id
+INNER JOIN cursos c ON m.curso-id = c.id
+LEFT JOIN professores p ON c.professor_id = p.id
+ORDER BY a.nome;
+
+--ATIVIDADE 06
+
+SELECT 
+a.nome AS nome_curso,
+c.nome AS nome_curso,
+m.data_matricula
+FROM alunos a
+
+INNER JOIN matriculas m ON a.id = m.aluno_id
+INNER JOIN cursos c ON m.curso_id = c.id
+WHERE m.data_matricula BETWEEN '2024-01-01' AND '2024-01-31'
+ORDER BY m.data_matricula, a.nome;
+
+
+--ATIVIDADE 07 
+
+SELECT 
+a.id,
+a.nome, 
+COUNT(m.curso_id) AS quantidade_cursos
+FROM alunos a
+INNER JOIN matriculas m ON a.id = m.aluno_id
+GROUP BY a.id, a.nome
+HAVING COUNT(m.curso_id)> 1
+ORDER BY quantidade_cursos DESC;
+
+
+
+--ATIVIDADE 08 
+SELECT COALESCE(cidade, 'Não informada')  AS cidade,
+COUNT(id) AS quantidade_alunos
+FROM alunos
+GROUP BY cidade
+ORDER BY quantidade_alunos DESC;
+
+
+
+--ATIVIDADE 09
+
+SELECT
+a.nome AS nome_aluno,
+c.nome AS nome_curso
+
+FROM alunos a
+CROSS JOIN cursos c
+ORDER BY a.nome, c.nome;
+
+
+--ATIVIDADE 10 
+
+
+SELECT 
+c.nome AS nome_curso,
+COALESCE(p.nome, 'Não atribuido') AS nome_professor,
+COUNT(DISTINCT m.aluno_id) AS quntidade_alunos,
+GROUP_CONCAT(DISTINCT a.nome ORDER BY a.nome SEPARATOR ',') AS lista_alunos
+FROM cursos c
+LEFT JOIN professores p ON c.ptofessor_id = p.id
+LEFT JOIN matriculas m ON c.id = m.curso_id
+LEFT JOIN alunos a ON m.aluno-id = a.id
+GROUP BY c.id, c.nome, p.nome
+ORDER BY c.nome;
+
+
+
+
